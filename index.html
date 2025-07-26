@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josna LGZ SocialSpace</title>
+    <meta name="description" content="Instagram-inspired social media platform with photo sharing, messaging, and social interactions">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300C896'><path d='M21 6.5v2a.5.5 0 0 1-.5.5H20v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9h-.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 3.5 6H4V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2h.5a.5.5 0 0 1 .5.5ZM18 9H6v8h12V9Zm0-3V4H6v2h12Z'/></svg>">
+    
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Date-fns -->
+    <script src="https://unpkg.com/date-fns@2.30.0/index.min.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="logo">
+                <i data-lucide="camera"></i>
+            </div>
+            <p>Loading Josna LGZ SocialSpace...</p>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen hidden">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <i data-lucide="camera"></i>
+                </div>
+                <h1>Josna LGZ SocialSpace</h1>
+                <p>Connect, Share, Inspire</p>
+            </div>
+            
+            <div class="login-form">
+                <h2>Welcome Back</h2>
+                <p>Sign in to continue to your social space</p>
+                
+                <form id="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="login-btn">
+                        <span>Sign In</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                
+                <button type="button" class="btn-secondary" id="signup-toggle">
+                    Create New Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="hidden">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo">
+                        <i data-lucide="camera"></i>
+                    </div>
+                    <span class="brand-text">Josna LGZ</span>
+                </div>
+
+                <div class="nav-search">
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="global-search" placeholder="Search users, posts...">
+                    </div>
+                </div>
+
+                <div class="nav-actions">
+                    <button class="nav-btn" id="messages-btn" title="Messages">
+                        <i data-lucide="message-circle"></i>
+                    </button>
+                    
+                    <button class="nav-btn" id="upload-btn" title="Create Post">
+                        <i data-lucide="plus-square"></i>
+                    </button>
+
+                    <div class="profile-avatar" id="nav-profile">
+                        <img src="https://via.placeholder.com/32" alt="Profile" id="nav-avatar">
+                    </div>
+
+                    <button class="nav-btn logout-btn" id="logout-btn" title="Logout">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="feed">
+                    <i data-lucide="home"></i>
+                    <span>Feed</span>
+                </button>
+                <button class="tab-btn" data-tab="search">
+                    <i data-lucide="search"></i>
+                    <span>Search</span>
+                </button>
+                <button class="tab-btn" data-tab="profile">
+                    <i data-lucide="user"></i>
+                    <span>Profile</span>
+                </button>
+                <button class="tab-btn" data-tab="messages">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                </button>
+                <button class="tab-btn" data-tab="activity">
+                    <i data-lucide="heart"></i>
+                    <span>Activity</span>
+                </button>
+            </div>
+
+            <div class="content-grid">
+                <!-- Main Content Area -->
+                <div class="content-main">
+                    <!-- Feed Tab -->
+                    <div id="feed-tab" class="tab-content active">
+                        <!-- Stories Section -->
+                        <div class="stories-section">
+                            <h3>Stories</h3>
+                            <div class="stories-container" id="stories-container">
+                                <div class="story-placeholder">
+                                    <div class="story-icon">
+                                        <i data-lucide="camera"></i>
+                                    </div>
+                                    <p>No stories available</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Posts Feed -->
+                        <div class="posts-feed" id="posts-feed">
+                            <div class="loading-posts">
+                                <div class="post-skeleton">
+                                    <div class="skeleton-header">
+                                        <div class="skeleton-avatar"></div>
+                                        <div class="skeleton-text">
+                                            <div class="skeleton-line"></div>
+                                            <div class="skeleton-line short"></div>
+                                        </div>
+                                    </div>
+                                    <div class="skeleton-image"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Tab -->
+                    <div id="search-tab" class="tab-content">
+                        <div class="search-section">
+                            <div class="search-container">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="user-search" placeholder="Search users...">
+                            </div>
+                            
+                            <div class="search-results" id="search-results">
+                                <div class="search-placeholder">
+                                    <i data-lucide="search"></i>
+                                    <p>Search for users to connect with</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Tab -->
+                    <div id="profile-tab" class="tab-content">
+                        <div class="profile-section" id="profile-section">
+                            <!-- Profile content will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Messages Tab -->
+                    <div id="messages-tab" class="tab-content">
+                        <div class="messages-placeholder">
+                            <i data-lucide="message-circle"></i>
+                            <h3>Messages</h3>
+                            <p>Open the messaging modal to chat with friends</p>
+                            <button class="btn-primary" id="open-messages">Open Messages</button>
+                        </div>
+                    </div>
+
+                    <!-- Activity Tab -->
+                    <div id="activity-tab" class="tab-content">
+                        <div class="activity-placeholder">
+                            <i data-lucide="heart"></i>
+                            <h3>Activity</h3>
+                            <p>Your likes, comments, and follows will appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <!-- User Profile Card -->
+                    <div class="user-card" id="user-card">
+                        <!-- User card content will be loaded here -->
+                    </div>
+
+                    <!-- Suggestions Card -->
+                    <div class="suggestions-card" id="suggestions-card">
+                        <div class="card-header">
+                            <h4>Suggestions for you</h4>
+                            <button class="see-all-btn">See All</button>
+                        </div>
+                        <div class="suggestions-list" id="suggestions-list">
+                            <!-- Suggestions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Post</h3>
+                <button class="modal-close" id="upload-modal-close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form id="upload-form" class="modal-body">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-placeholder">
+                        <i data-lucide="cloud-upload"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <span>Images only, max 5MB</span>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                </div>
+                
+                <div class="upload-preview hidden" id="upload-preview">
+                    <img id="preview-image" alt="Preview">
+                </div>
+                
+                <div class="form-group">
+                    <label for="caption">Caption</label>
+                    <textarea id="caption" placeholder="Write a caption..." rows="3"></textarea>
+                </div>
+                
+                <div class="upload-progress hidden" id="upload-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="progress-text">Uploading... 0%</p>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="upload-cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" id="upload-submit" disabled>Share Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Messaging Modal -->
+    <div id="messaging-modal" class="modal hidden">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Messages</h3>
+                <button class="modal-close" id="messaging-modal-close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="messaging-container">
+                <div class="conversations-panel">
+                    <div class="conversation-search">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="conversation-search" placeholder="Search conversations...">
+                    </div>
+                    
+                    <div class="conversations-list" id="conversations-list">
+                        <div class="conversations-placeholder">
+                            <i data-lucide="message-circle"></i>
+                            <p>No conversations yet</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-panel" id="chat-panel">
+                    <div class="chat-placeholder">
+                        <i data-lucide="message-circle"></i>
+                        <p>Select a conversation to start chatting</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="ui.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
