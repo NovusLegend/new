@@ -418,3 +418,21 @@ class ApiManager {
 
 // Create global API manager instance
 const apiManager = new ApiManager();
+// api.js
+async getPosts(userId = null) {
+    try {
+        let query = supabase
+            .from('posts')
+            .select(`
+                *,
+                user:users(id, email, first_name, last_name, profile_image_url), // <--- This line is key
+                likes(user_id),
+                comments(count)
+            `)
+            .order('created_at', { ascending: false });
+        // ...
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        throw error;
+    }
+}
