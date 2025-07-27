@@ -1,8 +1,8 @@
 // Configuration for the application
 const CONFIG = {
     // Supabase configuration - replace with your actual Supabase URL and anon key
-    SUPABASE_URL: 'YOUR_SUPABASE_URL',
-    SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY',
+    SUPABASE_URL: 'https://ccualarmtcpjgbmahsvl.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjdWFsYXJtdGNwamdibWFoc3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYzMTAsImV4cCI6MjA2OTEzMjMxMH0.qLfA8Cl-jF9OhGwsJbRlkFYbk7tg-1NsZ5FGt4EYO9Y',
     
     // API endpoints
     API_BASE_URL: window.location.origin,
