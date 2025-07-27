@@ -9,8 +9,26 @@ class SocialApp {
         this.suggestions = [];
         this.searchResults = [];
         this.currentProfile = null;
+        
     }
-
+// In SocialApp.loadFeed or similar function in app.js
+async loadFeed() {
+    try {
+        // ... other code
+        const posts = await apiManager.getPosts();
+        console.log("Fetched posts:", posts); // Inspect this
+        posts.map(post => {
+            // ...
+            // The problematic line is likely within here, where post.user is expected
+            this.uiManager.createPostCard(post, post.user, isLiked, commentsCount);
+            // The UIManager.createUserAvatar is then called with post.user
+        });
+        // ...
+    } catch (error) {
+        console.error('Error loading feed:', error);
+        this.uiManager.showToast('Failed to load feed.', 'error');
+    }
+}
     // Initialize the application
     async init() {
         try {
